@@ -1,14 +1,18 @@
 import { Request, Response } from "express";
 import { User } from '../models/UserSchema';
-import { Types } from "mongoose";
+import { Types, isValidObjectId } from "mongoose";
 import JWT from 'jsonwebtoken'
+import { generateToken } from "../config/passport";
 
 export const all = async (req: Request, res: Response) => {
     const users = await User.find()
+
     let list: string[] = []
+
     for (let i in users) {
         list.push(users[i].email)
     }
+
     res.json({ list })
 }
 
@@ -38,11 +42,34 @@ export const addUser = async (req: Request, res: Response) => {
             { expiresIn: '2h' }
         )
 
-        res.status(202)
+        res.status(200)
         res.json({ user: newUser, token })
     } catch (error) {
         console.log({ error })
         res.json({ error: 'Não conseguimos cadastrar o usuário ao BLOG!' })
+    }
+}
+
+export const login = async (req: Request, res: Response) => {
+    const { email, password } = req.body
+
+    console.log({ email, password })
+    if(email && password) {
+        let email: string = req.body.email
+        let password: string = req.body.password
+
+        let user = await User.findOne({
+            email,
+            password
+        })
+
+        if(user) {
+            const token = generateToken({ id: user.id })
+            console.log({ token, user })
+            return res.json({ status: true, token })
+        }
+
+        res.json({ error: true })
     }
 }
 
