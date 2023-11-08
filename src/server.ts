@@ -20,7 +20,7 @@ const initSever = async () => {
         server.use(express.urlencoded({extended: true}));
 
         server.use(passport.initialize())
-
+        
         server.use(userRouter)
 
         server.use((req: Request, res: Response) => {

@@ -15,11 +15,10 @@ const options = {
 
 passport.use(new JWTStrategy(options, async (payload, done) => {
     const user = await User.findById(payload.id)
-    if(user) {
-        return done(null, user)
-    } else {
-        return done(notAuthorizedJson, false)
-    }
+    
+    if (!user) return done(notAuthorizedJson)
+
+    return done(null, user)
 }))
 
 export const generateToken = (data: object) => {
@@ -28,9 +27,7 @@ export const generateToken = (data: object) => {
 
 export const privateRoute = (req: Request, res: Response, next: NextFunction) => {
     passport.authenticate('jwt', (err: Error, user: any) => {
-        console.log({ user })
         req.user = user
-        console.log(req.user)
         return user ? next() : next(notAuthorizedJson)
     })(req, res, next)
 }

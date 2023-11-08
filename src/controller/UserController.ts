@@ -45,7 +45,7 @@ export const addUser = async (req: Request, res: Response) => {
         res.status(200)
         res.json({ user: newUser, token })
     } catch (error) {
-        console.log({ error })
+
         res.json({ error: 'Não conseguimos cadastrar o usuário ao BLOG!' })
     }
 }
@@ -53,7 +53,6 @@ export const addUser = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body
 
-    console.log({ email, password })
     if(email && password) {
         let email: string = req.body.email
         let password: string = req.body.password
